@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>달려</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="./assets/css/normalize.css">
+    <style>
+        canvas{background: #eee; margin-bottom: 20px;}
+        .btns{text-align: center;}
+        button{
+            border: 0;
+            outline: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            vertical-align: top;
+            width: 200px;
+            height: 100px;
+            border-radius: 5px;
+            background: midnightblue;
+            color: #fff;
+            font-size: 40px;
+        }
+
+    </style>
+</head>
+
+
+<body>
+    <canvas></canvas>
+    <div class="btns">
+        <button onclick="jump()">JUMP!</button>
+    </div>
+
+    <script>
+        const getRandomNum = (mn, mx) => Math.floor(Math.random() * (mx - mn + 1)) + mn;
+
+        const canvas = document.querySelector('canvas');
+        const ctx = canvas.getContext('2d');
+
+        const mxJumpHeight = 100;
+        const jumpSpeed = 10;
+
+
+        let raf;
+        let rafTimer = 0;
+        let isJump = false;
+
+        const obj2Arr = [];
+
+        const window_w = window.innerWidth; 
+        const window_h = window.innerHeight;
+
+        canvas.width = window_w;
+        canvas.height = 300;
+
+        const colorArr = ['red', 'orange', 'yellow', 'green', 'blue', 'navy', 'purple'];
+
+        const obj1 = {
+            x: 10,
+            y: 200,
+            w: 30,
+            h: 30,
+            color: 'cyan',
+            draw(){
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.w, this.h);
+                ctx.fill();
+            }
+        }
+
+        class Obj2 {
+            constructor(rdmNum){
+                this.x = window_w;
+                this.y = 200;
+                this.w = 30;
+                this.h = 30;
+                this.bg = colorArr[rdmNum];
+                this.speed = rdmNum * 2;
+
+            }
+            draw(){
+                ctx.fillStyle = this.bg;
+                ctx.fillRect(this.x, this.y, this.w, this.h);
+                ctx.fill();
+            }
+        }
+
+        // ctx.beginPath();
+        // ctx.moveTo(0, 150);
+        // ctx.lineTo(window_w, 150);
+        // ctx.stroke();
+
+        function gameStart(){
+            rafTimer++;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if(isJump){
+                obj1.y -= jumpSpeed;
+                if(obj1.y < mxJumpHeight){
+                    isJump = false;
+                }
+            }else{
+                obj1.y += jumpSpeed;
+                if(obj1.y > 200) obj1.y = 200;
+            }
+            obj1.draw();
+
+            if(rafTimer % 120 === 0){
+                const obj2 = new Obj2(getRandomNum(0, colorArr.length - 1));
+                obj2Arr.push(obj2);
+            }
+
+
+
+            obj2Arr.forEach(function(el, i, o){
+                if(el.x < -el.w - 10) o.splice(i, 1);
+                el.x -= (el.speed + 1);
+                el.draw();
+            })
+            
+            raf = window.requestAnimationFrame(gameStart);
+
+        }
+
+        gameStart();
+
+        function jump(){
+            if(obj1.y !== 200) return;
+            isJump = true;
+        }
+
+        
+    </script>
+</body>
+
+</html>
