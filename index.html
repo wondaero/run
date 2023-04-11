@@ -7,32 +7,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="./assets/css/normalize.css">
     <style>
-        canvas{background: #eee; margin-bottom: 20px;}
-        .btns{text-align: center;}
-        button{
-            border: 0;
-            outline: 0;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            vertical-align: top;
-            width: 200px;
-            height: 100px;
-            border-radius: 5px;
-            background: midnightblue;
-            color: #fff;
-            font-size: 40px;
-        }
+        html, body{height: 100%; overflow: hidden;}
+        canvas{background: #000;}
 
     </style>
 </head>
 
 
 <body>
-    <canvas></canvas>
-    <div class="btns">
-        <button onclick="jump()">JUMP!</button>
-    </div>
+    <canvas onclick="pushpush(event);" ontouchstart="pushpush(event);"></canvas>
 
     <script>
         const getRandomNum = (mn, mx) => Math.floor(Math.random() * (mx - mn + 1)) + mn;
@@ -48,24 +31,34 @@
         let rafTimer = 0;
         let isJump = false;
 
+        let btn1, btn2, btn3, btn4, btn5;
+
         const obj2Arr = [];
 
         const window_w = window.innerWidth; 
         const window_h = window.innerHeight;
 
         canvas.width = window_w;
-        canvas.height = 300;
+        canvas.height = window_h;
 
-        const colorArr = ['red', 'orange', 'yellow', 'green', 'blue', 'navy', 'purple'];
+        const colorArr = ['#ACD7F2', '#C0D966', '#F2B705', '#F28241', '#F20505'];
 
-        const obj1 = {
-            x: 10,
-            y: 200,
-            w: 30,
-            h: 30,
-            color: 'cyan',
+        class Obj1 {
+            constructor(rdmNum){
+                this.x = 10 + (rdmNum * 50);
+                this.y = canvas.height - 10 - 50;
+                this.w = 40;
+                this.h = 10;
+                this.bg = colorArr[rdmNum];
+                this.speed = rdmNum * 2;
+
+            }
             draw(){
-                ctx.fillStyle = this.color;
+                ctx.fillStyle = this.bg + '40';
+                ctx.fillRect(this.x, 0, 40, canvas.height);
+                ctx.fill();
+
+                ctx.fillStyle = this.bg;
                 ctx.fillRect(this.x, this.y, this.w, this.h);
                 ctx.fill();
             }
@@ -73,13 +66,12 @@
 
         class Obj2 {
             constructor(rdmNum){
-                this.x = window_w;
-                this.y = 200;
-                this.w = 30;
-                this.h = 30;
+                this.x = 10 + (rdmNum * 50);
+                this.y = 0;
+                this.w = 40;
+                this.h = 10;
                 this.bg = colorArr[rdmNum];
-                this.speed = rdmNum * 2;
-
+                this.speed = 2;
             }
             draw(){
                 ctx.fillStyle = this.bg;
@@ -96,18 +88,33 @@
         function gameStart(){
             rafTimer++;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            if(isJump){
-                obj1.y -= jumpSpeed;
-                if(obj1.y < mxJumpHeight){
-                    isJump = false;
-                }
-            }else{
-                obj1.y += jumpSpeed;
-                if(obj1.y > 200) obj1.y = 200;
-            }
-            obj1.draw();
+            // if(isJump){
+            //     obj1.y -= jumpSpeed;
+            //     if(obj1.y < mxJumpHeight){
+            //         isJump = false;
+            //     }
+            // }else{
+            //     obj1.y += jumpSpeed;
+            //     if(obj1.y > 200) obj1.y = 200;
+            // }
+            // obj1.draw();
 
-            if(rafTimer % 120 === 0){
+            const obj1_1 = new Obj1(0);
+            const obj1_2 = new Obj1(1);
+            const obj1_3 = new Obj1(2);
+            const obj1_4 = new Obj1(3);
+            const obj1_5 = new Obj1(4);
+
+            obj1_1.draw();
+            obj1_2.draw();
+            obj1_3.draw();
+            obj1_4.draw();
+            obj1_5.draw();
+
+            
+
+
+            if(rafTimer % 10 === 0){
                 const obj2 = new Obj2(getRandomNum(0, colorArr.length - 1));
                 obj2Arr.push(obj2);
             }
@@ -115,10 +122,12 @@
 
 
             obj2Arr.forEach(function(el, i, o){
-                if(el.x < -el.w - 10) o.splice(i, 1);
-                el.x -= (el.speed + 1);
+                if(el.y > canvas.height - 10 - 50) o.splice(i, 1);
+                el.y += (el.speed + 1);
                 el.draw();
             })
+
+
             
             raf = window.requestAnimationFrame(gameStart);
 
@@ -126,10 +135,44 @@
 
         gameStart();
 
-        function jump(){
-            if(obj1.y !== 200) return;
-            isJump = true;
+        // canvas.addEventListener('click', aaa);
+
+
+        function pushpush(e, key){
+            e.preventDefault();
+
+            let x, y;
+
+            if(e.type === 'click'){
+                x = e.offsetX;
+                y = e.offsetY;
+                
+            }else if(e.type === 'touchstart'){
+                x = e.touches[0].clientX;
+                y = e.touches[0].clientY;
+            }
+
+            console.log(x);
+            console.log(y);
+
+            if(9 < x && x < 51){
+                btn1 = '';
+            }
+            if(59 < x && x < 101){
+                btn2 = '';
+            }
+            if(109 < x && x < 151){
+                btn3 = '';
+            }
+            if(159 < x && x < 201){
+                btn4 = '';
+            }
+            if(209 < x && x < 251){
+                btn5 = '';
+            }
+
         }
+
 
         
     </script>
