@@ -27,8 +27,6 @@
         let rafTimer = 0;
         let isJump = false;
 
-        // let btn1, btn2, btn3, btn4, btn5;
-
         const btns = {
             1: '',
             2: '',
@@ -45,20 +43,32 @@
         canvas.width = window_w;
         canvas.height = window_h;
 
+        function calcSize(outerPd, innerPd){
+            const canvasWidth = canvas.width;
+            const wholeSize = canvasWidth  - (canvasWidth % 10) - (outerPd * 2);
+            const formSize = (wholeSize - (innerPd * 4)) / 5
+
+            return formSize;
+        }
+
+        const marginLeft = (canvas.width % 10) / 2;
+
+        const formSize = calcSize(10, 15);
+
         const colorArr = ['#ACD7F2', '#C0D966', '#F2B705', '#F28241', '#F20505'];
 
         class Obj1 {
             constructor(rdmNum){
-                this.x = 10 + (rdmNum * 50);
+                this.x = (rdmNum * (formSize + 15)) + marginLeft + 10;
                 // this.y = canvas.height - 10 - 50;
-                this.y = 10;
-                this.w = 40;
-                this.h = 10;
+                this.y = 50;
+                this.w = formSize;
+                this.h = 15;
                 this.bg = colorArr[rdmNum];
             }
             draw(bool){
                 ctx.fillStyle = this.bg + (bool ? '': '40');
-                ctx.fillRect(this.x, 0, 40, canvas.height);
+                ctx.fillRect(this.x, 0, formSize, canvas.height);
                 ctx.fill();
 
                 ctx.strokeStyle = '#fff';
@@ -69,10 +79,10 @@
 
         class Obj2 {
             constructor(rdmNum){
-                this.x = 10 + (rdmNum * 50);
+                this.x = (rdmNum * (formSize + 15)) + marginLeft + 10;
                 this.y = canvas.height;
-                this.w = 40;
-                this.h = 10;
+                this.w = formSize;
+                this.h = 15;
                 this.bg = colorArr[rdmNum];
                 this.speed = 1;
                 this.idx = rdmNum + 1;
@@ -129,7 +139,7 @@
                     if(el.y < 0) o.splice(i, 1);
                     el.y -= (el.speed + 1);
     
-                    if(btns[el.idx] === true && el.y < 20 && el.y > 0){
+                    if(btns[el.idx] === true && el.y < 80 && el.y > 40){
                         btns[el.idx] = '';
 
                         const good = new Obj1(el.idx - 1);
@@ -167,29 +177,32 @@
                 y = e.touches[0].clientY;
             }
 
-            // console.log(x);
-            // console.log(y);
+            function range(idx){
+                const calced = marginLeft + 10 + ((formSize + 15) * idx);
+                return {
+                    s: calced,
+                    e: calced + formSize
+                }
+            }
 
-            if(9 < x && x < 51){
+
+            if(range(0).s < x && x < range(0).e){
                 btns[1] = true;
             }
-            if(59 < x && x < 101){
+            if(range(1).s < x && x < range(1).e){
                 btns[2] = true;
             }
-            if(109 < x && x < 151){
+            if(range(2).s < x && x < range(2).e){
                 btns[3] = true;
             }
-            if(159 < x && x < 201){
+            if(range(3).s < x && x < range(3).e){
                 btns[4] = true;
             }
-            if(209 < x && x < 251){
+            if(range(4).s < x && x < range(4).e){
                 btns[5] = true;
             }
-
         }
 
-
-        
     </script>
 </body>
 
